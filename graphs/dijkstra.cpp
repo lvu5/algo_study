@@ -27,7 +27,7 @@ int min_distance(vector<bool> &visited, vector<int> &dist) {
 void dijkstra_naive(vector<pair<int, int>> graph[],int src, int n) {
     vector<bool> visited(n);
     vector<int> dist(n, INT_MAX);
-    dist[0] = 0;
+    dist[src] = 0;
 
     for(int i = 0; i < n - 1; i++) {
         int u = min_distance(visited, dist);
@@ -37,6 +37,30 @@ void dijkstra_naive(vector<pair<int, int>> graph[],int src, int n) {
             int wt = i->second;
             if (dist[v] < dist[u] + wt)
                 dist[v] = dist[u] + wt;
+        }
+    }
+}
+
+void dijkstra_withQueue(vector<pair<int, int>> graph[], int src, int n){
+    vector<bool> visited(n, false);
+    vector<int> dist(n, INT_MAX);
+    dist[src] = 0;
+    // first param is the enclosed data type for the container
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int, int>>> fringe;
+
+    fringe.push(make_pair(0, src));
+
+    while (!fringe.empty()){
+        pair<int, int> u = fringe.top();
+        // first is the distance, second is node
+        fringe.pop();
+        for(auto i : graph[u.second]){
+            int wt = i.first;
+            int v = i.second;
+            if (dist[v] > dist[u.second] + wt){
+                dist[v] = dist[u.second] + wt;
+                fringe.push(make_pair(dist[v], v));
+            }
         }
     }
 }
